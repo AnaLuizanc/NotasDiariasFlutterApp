@@ -10,12 +10,48 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
 
   void _exibirTelaCadastro() {
-    setState(() {
-      _counter++;
-    });
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Nova anotação"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _titleController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                      labelText: "Título",
+                      hintText: "Digite título..."),
+
+                ),
+                TextField(
+                  controller: _descriptionController,
+                  decoration: const InputDecoration(
+                      labelText: "Descrição",
+                      hintText: "Digite descrição..."),
+                )
+              ],
+            ),
+            actions: [
+              ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancelar")
+                  ),
+              ElevatedButton(
+                  onPressed: () {
+                    //função para salvar/atualizar
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Salvar"))
+            ],
+          );
+        });
   }
 
   @override
