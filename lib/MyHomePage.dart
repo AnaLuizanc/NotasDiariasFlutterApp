@@ -12,7 +12,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  AnotacoesHelper _db = AnotacoesHelper();
+  final AnotacoesHelper _db = AnotacoesHelper();
   List<Anotacao> anotacoes = [];
 
   @override
@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     int resultado = await _db.salvarAnotacao(anotacao);
 
-    print("Dados salvos: " + resultado.toString());
+    print("Dados salvos: $resultado");
 
     _titleController.clear();
     _descriptionController.clear();
@@ -84,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
   _recuperarAnotacoes() async {
     List anotacoesRecuperadas = await _db.recuperarAnotacoes();
 
-    print("Lista anotacoes:\n" + anotacoesRecuperadas.toString());
+    print("Lista anotacoes:\n$anotacoesRecuperadas");
 
     List<Anotacao> listaTemporaria = [];
     for (var item in anotacoesRecuperadas) {
@@ -97,11 +97,26 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  String _formatarData(String data) {
+    try {
+      DateTime dateTime = DateTime.parse(data);
+      return "${dateTime.day.toString().padLeft(2, '0')}/"
+          "${dateTime.month.toString().padLeft(2, '0')}/"
+          "${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:"
+          "${dateTime.minute.toString().padLeft(2, '0')}";
+    } catch (e) {
+      return data;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme
+            .of(context)
+            .colorScheme
+            .inversePrimary,
         title: const Text("Minhas Anotações"),
       ),
       body: Column(
@@ -111,18 +126,52 @@ class _MyHomePageState extends State<MyHomePage> {
               itemCount: anotacoes.length,
               itemBuilder: (context, index) {
                 final anotacao = anotacoes[index];
-                return ListTile(
-                  title: Text(anotacao.titulo ?? ''),
-                  subtitle: Text(anotacao.descricao ?? ''),
+                return Card(
+                  child: ListTile(
+                    title: Text(anotacao.titulo.toString()),
+                    subtitle: Text(
+                        "${_formatarData(anotacao.data.toString())} - ${anotacao
+                            .descricao}"),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () {},
+                          child: const Padding(
+                            padding: EdgeInsets.only(right: 16),
+                            child: Icon(
+                                Icons.edit,
+                                color: Colors.green),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {},
+                          child: const Icon(
+                              Icons.remove,
+                              color: Colors.red),
+                        ),
+                      ],
+                    ),
+                  ),
                 );
+                // return ListTile(
+                //   title: Text(anotacao.titulo ?? ''),
+                //   subtitle: Text(anotacao.descricao ?? ''),
+                // );
               },
             ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        foregroundColor: Theme.of(context).colorScheme.inverseSurface,
+        backgroundColor: Theme
+            .of(context)
+            .colorScheme
+            .inversePrimary,
+        foregroundColor: Theme
+            .of(context)
+            .colorScheme
+            .inverseSurface,
         child: const Icon(Icons.add),
         onPressed: () {
           _exibirTelaCadastro();

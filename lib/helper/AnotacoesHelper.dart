@@ -10,7 +10,7 @@ class AnotacoesHelper {
     return _anotacoesHelper;
   }
 
-  AnotacoesHelper._internal() {}
+  AnotacoesHelper._internal();
 
   static final AnotacoesHelper _anotacoesHelper = AnotacoesHelper._internal();
 
