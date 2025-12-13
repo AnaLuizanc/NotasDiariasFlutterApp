@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:notas_diarias_app/model/Anotacao.dart';
+import 'package:notas_diarias_app/helper/AnotacoesHelper.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -11,6 +13,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  AnotacoesHelper _db = AnotacoesHelper();
 
   void _exibirTelaCadastro() {
     showDialog(
@@ -44,13 +47,28 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
               ElevatedButton(
                   onPressed: () {
-                    //função para salvar/atualizar
+                    _salvarAtualizarAnotacao();
                     Navigator.pop(context);
                   },
-                  child: const Text("Salvar"))
+                  child: const Text("Salvar")
+              )
             ],
           );
         });
+  }
+
+  _salvarAtualizarAnotacao() async {
+    String? titulo = _titleController.text;
+    String? descricao = _descriptionController.text;
+
+    Anotacao anotacao = Anotacao(titulo, descricao, DateTime.now().toString());
+
+    int resultado = await _db.salvarAnotacao(anotacao);
+
+    print("Dados salvos: " + resultado.toString());
+
+    _titleController.clear();
+    _descriptionController.clear();
   }
 
   @override
