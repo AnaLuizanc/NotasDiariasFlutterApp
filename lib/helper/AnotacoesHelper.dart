@@ -56,4 +56,9 @@ class AnotacoesHelper {
     List anotacoes = await bancoDados.rawQuery(sql);
     return anotacoes;
   }
+
+  Future<int> removerAnotacao(int id) async {
+    var bancoDados = await db;
+    return await bancoDados.delete(nomeTabela, where: "id = ?", whereArgs: [id]);
+  }
 }

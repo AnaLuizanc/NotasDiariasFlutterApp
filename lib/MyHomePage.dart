@@ -97,6 +97,37 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  _removerAnotacao(int id) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Certeza que deseja excluir?"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Text("Esta ação não poderá ser desfeita."),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancelar"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await _db.removerAnotacao(id);
+                _recuperarAnotacoes();
+                Navigator.pop(context);
+              },
+              child: const Text("OK"),
+            )
+          ],
+        );
+      },
+    );
+  }
+
   String _formatarData(String data) {
     try {
       DateTime dateTime = DateTime.parse(data);
@@ -145,7 +176,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            _removerAnotacao(anotacao.id!);
+                          },
                           child: const Icon(
                               Icons.remove,
                               color: Colors.red),
@@ -154,10 +187,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 );
-                // return ListTile(
-                //   title: Text(anotacao.titulo ?? ''),
-                //   subtitle: Text(anotacao.descricao ?? ''),
-                // );
               },
             ),
           ),
