@@ -1,32 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  //
-  // _recuperarBD() async {
-  //   final caminhoBD = await getDatabasesPath();
-  //   final localBD = join(caminhoBD, "banco_minhas_anotacoes.db");
-  //
-  //   var bd = await openDatabase(
-  //     localBD,
-  //     version: 1,
-  //     onCreate: (bd, bdVersaoRecente) {
-  //       String sql =
-  //           "CREATE TABLE anotacoes (id INTEGER PRIMARY KEY AUTOINCREMENT, titulo VARCHAR, descricao TEXT, data DATETIME)";
-  //       bd.execute(sql);
-  //     },
-  //   );
-  // }
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -36,8 +17,7 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text("Nova an"
-                "otação"),
+            title: const Text("Nova anotação"),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
