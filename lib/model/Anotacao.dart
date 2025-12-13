@@ -18,4 +18,11 @@ class Anotacao {
     }
     return map;
   }
+
+  Anotacao.fromMap(Map map) {
+    this.id = map["id"];
+    this.titulo = map["titulo"];
+    this.descricao = map["descricao"];
+    this.data = map["data"];
+  }
 }
