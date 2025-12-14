@@ -67,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(
               onPressed: () async {
                 await _salvarAtualizarAnotacao(anotacaoSelecionada: anotacao);
+                if (!mounted) return;
                 Navigator.pop(context);
               },
               child: Text(textoSalvarAtualizar),
@@ -132,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(
               onPressed: () async {
                 await _db.removerAnotacao(id);
-                _recuperarAnotacoes();
+                await _recuperarAnotacoes();
                 if (!mounted) return;
                 Navigator.pop(context);
               },
