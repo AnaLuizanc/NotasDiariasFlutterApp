@@ -1,7 +1,7 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../model/Anotacao.dart';
+import '../model/anotacao.dart';
 
 class AnotacoesHelper {
   static final String nomeTabela = "anotacoes";

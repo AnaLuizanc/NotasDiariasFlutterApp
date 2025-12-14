@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:notas_diarias_app/model/Anotacao.dart';
-import 'package:notas_diarias_app/helper/AnotacoesHelper.dart';
-import 'DetalhesAnotacao.dart';
+import 'package:notas_diarias_app/model/anotacao.dart';
+import 'package:notas_diarias_app/helper/anotacoes_helper.dart';
+import 'detalhes_anotacao.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -67,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(
               onPressed: () async {
                 await _salvarAtualizarAnotacao(anotacaoSelecionada: anotacao);
+                if (!mounted) return;
                 Navigator.pop(context);
               },
               child: Text(textoSalvarAtualizar),
@@ -101,8 +102,6 @@ class _MyHomePageState extends State<MyHomePage> {
   _recuperarAnotacoes() async {
     List anotacoesRecuperadas = await _db.recuperarAnotacoes();
 
-    print("Lista anotacoes:\n$anotacoesRecuperadas");
-
     List<Anotacao> listaTemporaria = [];
     for (var item in anotacoesRecuperadas) {
       Anotacao anotacao = Anotacao.fromMap(item);
@@ -134,7 +133,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(
               onPressed: () async {
                 await _db.removerAnotacao(id);
-                _recuperarAnotacoes();
+                await _recuperarAnotacoes();
+                if (!mounted) return;
                 Navigator.pop(context);
               },
               child: const Text("OK"),
