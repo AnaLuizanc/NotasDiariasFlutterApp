@@ -101,8 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
   _recuperarAnotacoes() async {
     List anotacoesRecuperadas = await _db.recuperarAnotacoes();
 
-    print("Lista anotacoes:\n$anotacoesRecuperadas");
-
     List<Anotacao> listaTemporaria = [];
     for (var item in anotacoesRecuperadas) {
       Anotacao anotacao = Anotacao.fromMap(item);
@@ -135,6 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () async {
                 await _db.removerAnotacao(id);
                 _recuperarAnotacoes();
+                if (!mounted) return;
                 Navigator.pop(context);
               },
               child: const Text("OK"),
