@@ -21,15 +21,25 @@ class _MyHomePageState extends State<MyHomePage> {
     _recuperarAnotacoes();
   }
 
-  void _exibirTelaCadastro() {
+  void _exibirTelaCadastro({Anotacao? anotacao}) {
+    String textoSalvarAtualizar = "";
+    if (anotacao == null) {
+      _titleController.text = "";
+      _descriptionController.text = "";
+      textoSalvarAtualizar = "Salvar";
+    } else {
+      _titleController.text = anotacao.titulo.toString();
+      _descriptionController.text = anotacao.descricao.toString();
+      textoSalvarAtualizar = "Atualizar";
+    }
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Nova anotação"),
+          title: Text("$textoSalvarAtualizar anotação"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
+            children: <Widget>[
               TextField(
                 controller: _titleController,
                 autofocus: true,
@@ -54,10 +64,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             ElevatedButton(
               onPressed: () {
-                _salvarAtualizarAnotacao();
+                _salvarAtualizarAnotacao(anotacaoSelecionada: anotacao);
                 Navigator.pop(context);
               },
-              child: const Text("Salvar"),
+              child: Text(textoSalvarAtualizar),
             )
           ],
         );
@@ -65,15 +75,19 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  _salvarAtualizarAnotacao() async {
+  _salvarAtualizarAnotacao({Anotacao? anotacaoSelecionada}) async {
     String? titulo = _titleController.text;
     String? descricao = _descriptionController.text;
 
-    Anotacao anotacao = Anotacao(titulo, descricao, DateTime.now().toString());
-
-    int resultado = await _db.salvarAnotacao(anotacao);
-
-    print("Dados salvos: $resultado");
+    if(anotacaoSelecionada == null){
+      Anotacao anotacao = Anotacao(titulo, descricao, DateTime.now().toString());
+      await _db.salvarAnotacao(anotacao);
+    } else {
+      anotacaoSelecionada.titulo = titulo;
+      anotacaoSelecionada.descricao = descricao;
+      anotacaoSelecionada.data = DateTime.now().toString();
+      await _db.atualizarAnotacao(anotacaoSelecionada);
+    }
 
     _titleController.clear();
     _descriptionController.clear();
@@ -167,7 +181,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            _exibirTelaCadastro(anotacao: anotacao);
+                          },
                           child: const Padding(
                             padding: EdgeInsets.only(right: 16),
                             child: Icon(
