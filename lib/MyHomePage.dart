@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notas_diarias_app/model/Anotacao.dart';
 import 'package:notas_diarias_app/helper/AnotacoesHelper.dart';
+import 'DetalhesAnotacao.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -21,7 +22,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _recuperarAnotacoes();
   }
 
-  void _exibirTelaCadastro({Anotacao? anotacao}) {
+  Future<void> _exibirTelaCadastro({Anotacao? anotacao}) async {
     String textoSalvarAtualizar = "";
     if (anotacao == null) {
       _titleController.text = "";
@@ -32,7 +33,8 @@ class _MyHomePageState extends State<MyHomePage> {
       _descriptionController.text = anotacao.descricao.toString();
       textoSalvarAtualizar = "Atualizar";
     }
-    showDialog(
+
+    return showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -63,8 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const Text("Cancelar"),
             ),
             ElevatedButton(
-              onPressed: () {
-                _salvarAtualizarAnotacao(anotacaoSelecionada: anotacao);
+              onPressed: () async {
+                await _salvarAtualizarAnotacao(anotacaoSelecionada: anotacao);
                 Navigator.pop(context);
               },
               child: Text(textoSalvarAtualizar),
@@ -79,8 +81,9 @@ class _MyHomePageState extends State<MyHomePage> {
     String? titulo = _titleController.text;
     String? descricao = _descriptionController.text;
 
-    if(anotacaoSelecionada == null){
-      Anotacao anotacao = Anotacao(titulo, descricao, DateTime.now().toString());
+    if (anotacaoSelecionada == null) {
+      Anotacao anotacao =
+          Anotacao(titulo, descricao, DateTime.now().toString());
       await _db.salvarAnotacao(anotacao);
     } else {
       anotacaoSelecionada.titulo = titulo;
@@ -112,17 +115,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _removerAnotacao(int id) async {
+    await _db.removerAnotacao(id);
+    _recuperarAnotacoes();
+  }
+
+  void _removerAnotacaoComConfirmacao(int id) async {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text("Certeza que deseja excluir?"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              Text("Esta ação não poderá ser desfeita."),
-            ],
-          ),
+          content: const Text("Esta ação não poderá ser desfeita."),
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.pop(context),
@@ -158,10 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme
-            .of(context)
-            .colorScheme
-            .inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Minhas Anotações"),
       ),
       body: Column(
@@ -175,8 +175,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: ListTile(
                     title: Text(anotacao.titulo.toString()),
                     subtitle: Text(
-                        "${_formatarData(anotacao.data.toString())} - ${anotacao
-                            .descricao}"),
+                        "${_formatarData(anotacao.data.toString())} - ${anotacao.descricao}"),
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetalhesAnotacao(
+                            anotacao: anotacao,
+                            onEdit: (anotacao) async =>
+                                await _exibirTelaCadastro(anotacao: anotacao),
+                            onDelete: (id) => _removerAnotacao(id),
+                          ),
+                        ),
+                      );
+                      _recuperarAnotacoes();
+                    },
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -186,18 +199,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           },
                           child: const Padding(
                             padding: EdgeInsets.only(right: 16),
-                            child: Icon(
-                                Icons.edit,
-                                color: Colors.green),
+                            child: Icon(Icons.edit, color: Colors.green),
                           ),
                         ),
                         GestureDetector(
                           onTap: () {
-                            _removerAnotacao(anotacao.id!);
+                            _removerAnotacaoComConfirmacao(anotacao.id!);
                           },
-                          child: const Icon(
-                              Icons.remove,
-                              color: Colors.red),
+                          child: const Icon(Icons.delete, color: Colors.red),
                         ),
                       ],
                     ),
@@ -209,14 +218,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme
-            .of(context)
-            .colorScheme
-            .inversePrimary,
-        foregroundColor: Theme
-            .of(context)
-            .colorScheme
-            .inverseSurface,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        foregroundColor: Theme.of(context).colorScheme.inverseSurface,
         child: const Icon(Icons.add),
         onPressed: () {
           _exibirTelaCadastro();

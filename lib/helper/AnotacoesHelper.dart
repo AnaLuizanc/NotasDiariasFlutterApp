@@ -27,7 +27,8 @@ class AnotacoesHelper {
 
   inicializarDB() async {
     final caminhoBancoDados = await getDatabasesPath();
-    final localBancoDados = join(caminhoBancoDados, "banco_minhas_anotacoes.db");
+    final localBancoDados =
+        join(caminhoBancoDados, "banco_minhas_anotacoes.db");
 
     var db = await openDatabase(
       localBancoDados,
@@ -59,16 +60,13 @@ class AnotacoesHelper {
 
   Future<int> removerAnotacao(int id) async {
     var bancoDados = await db;
-    return await bancoDados.delete(nomeTabela, where: "id = ?", whereArgs: [id]);
+    return await bancoDados
+        .delete(nomeTabela, where: "id = ?", whereArgs: [id]);
   }
 
   Future<int> atualizarAnotacao(Anotacao anotacao) async {
     var bancoDados = await db;
-    return await bancoDados.update(
-      nomeTabela,
-      anotacao.toMap(),
-      where: "id = ?",
-      whereArgs: [anotacao.id]
-    );
+    return await bancoDados.update(nomeTabela, anotacao.toMap(),
+        where: "id = ?", whereArgs: [anotacao.id]);
   }
 }
