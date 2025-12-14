@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:notas_diarias_app/model/Anotacao.dart';
-import 'package:notas_diarias_app/helper/AnotacoesHelper.dart';
-import 'DetalhesAnotacao.dart';
+import 'package:notas_diarias_app/model/anotacao.dart';
+import 'package:notas_diarias_app/helper/anotacoes_helper.dart';
+import 'detalhes_anotacao.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});

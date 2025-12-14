@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notas_diarias_app/model/Anotacao.dart';
+import 'package:notas_diarias_app/model/anotacao.dart';
 
 class DetalhesAnotacao extends StatelessWidget {
   final Anotacao anotacao;
